@@ -86,8 +86,8 @@ db.get("SELECT name FROM sqlite_master WHERE type='table' AND name='acronyms'", 
 
     });
 
-    app.listen(1337, function () {
-      console.log('Acorn listening on port 1337');
+    app.listen(process.env.PORT, function () {
+      console.log('Acorn listening on ' + process.env.PORT);
     });
 
 });
