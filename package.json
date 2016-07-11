@@ -1,0 +1,9 @@
+{
+  "name": "acorn-bot",
+  "version": "0.0.0",
+  "description": "Acorn: The acronym slack bot",
+  "devDependencies": {},
+  "dependencies": {
+    "express": "^4.14.0"
+  }
+}
