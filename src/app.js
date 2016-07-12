@@ -49,7 +49,10 @@ db.get("SELECT name FROM sqlite_master WHERE type='table' AND name='acronyms'", 
 
     });
 
-    app.post('/', function(pReq, pRes){
+    app.post('/', function(pReq, pRes) {
+
+        // If first word is 'define', split by , and try to insert into DB
+        // If first word is 'help' give list of help items
         var query = pReq.body.text;
         console.log(query);
         var sqlSelect = "SELECT * FROM 'acronyms' WHERE acronym = '" + query.toUpperCase() + "'";
@@ -60,7 +63,7 @@ db.get("SELECT name FROM sqlite_master WHERE type='table' AND name='acronyms'", 
           else {
               // Acronym is new, use it here
               if(row.length == 0) {
-                  pRes.send('that is a new acronym, setting definitions coming soon');
+                  pRes.send('that is not defined. To define acronym type ```/acorn define aronym, acornym definition, optional url to more info```');
             } else {
                 pRes.send('Hey I\'m Acorn! :tree:  ' + query + " means " + row[1].description +
                            " Check out this URL: " + row[1].url
