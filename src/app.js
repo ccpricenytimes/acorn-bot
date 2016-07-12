@@ -55,6 +55,7 @@ db.get("SELECT name FROM sqlite_master WHERE type='table' AND name='acronyms'", 
 
     // We define a new route that will handle bookmark creation
     app.post('/define', function(req, res, next) {
+        console.log(req.query);
      var acronym = "SLOP";
       var description = "Secret Life of Pets";
       var url = "http://www.nytimes.com/2016/07/08/movies/the-secret-life-of-pets-review.html?_r=0";
