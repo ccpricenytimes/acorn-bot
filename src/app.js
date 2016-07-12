@@ -51,6 +51,14 @@ db.get("SELECT name FROM sqlite_master WHERE type='table' AND name='acronyms'", 
 
     app.post('/', function(pReq, pRes) {
 
+        // Some Text Definitions
+        var hello = "Hello " + pReq.body.user_name + " I\'m Acorn. :tree: \n";
+        var confused = "\n Confused? Type `/acorn help`";
+        var lookupHelp = '\nTo look up an acronym type:' + '``` /acorn *acronym* ```\n';
+        var defineHelp = '\n To define an acronym type:' +
+            '```/acorn define *MYACRONYM*, The Definition of My Acronym, http://www.optionalSiteToExplainMore.com ```' +
+            '\n Remember the `,` in between';
+
         // If first word is 'define', split by , and try to insert into DB
         // If first word is 'help' give list of help items
         var query = pReq.body.text;
@@ -64,7 +72,7 @@ db.get("SELECT name FROM sqlite_master WHERE type='table' AND name='acronyms'", 
         if (command == 'DEFINE') {
             var definition = query.split(',');
             if (definition.length < 2) {
-                pRes.send('Your definition is malformed. Please Try again');
+                pRes.send('Your definition is malformed. Please Try again' + confused);
             } else {
                     var acronym = definition[0].split(' ')[1]; // get rid of define
                     var description = definition[1];
@@ -92,24 +100,22 @@ db.get("SELECT name FROM sqlite_master WHERE type='table' AND name='acronyms'", 
                              }
                              else {
                                console.log('success!');
-                               pRes.send( acronym + ' has been added to the dictionary. \n You can search for it with  ```/acorn ' + acronym + ' ```');
+                               pRes.send( acronym + ' has been added to the dictionary.' + lookupHelp);
                              }
                            }); // end acronym insert
                          } else {
                             var acronymText = commandSplit[1].split(',')[0];
-                             pRes.send('Acnonym Already Exists. \n You can search with ```/acorn ' + acrnoymText + ' ```');
+                             pRes.send('Acnonym Already Exists. \n You can search with ```/acorn ' + acrnoymText + ' ```' + confused);
                          }
                        }
                      }); // end duplicate check for acronym insert
             }
 
         } else if(command == 'HELP') {
-            var helpText = 'Hello ' + preq.body.user_name +' my name is acorn :tree: \n' +
-            'I am a simple acronym bot \n' +
-            'To look up an acronym say' +
-            '``` /acorn NYT ```' +
-            'To define an acronym say' +
-            '``` /acorn define NYT, The New York Times, http://www.nytimes.com ```'
+            var helpText = hello +
+            'I am a simple acronym bot' +
+            lookupHelp + defineHelp;
+            pRes.send(helpText);
 
         } else {
             console.log('acronym lookup');
@@ -121,9 +127,9 @@ db.get("SELECT name FROM sqlite_master WHERE type='table' AND name='acronyms'", 
           else {
               // Acronym is new, use it here
               if(row.length == 0) {
-                  pRes.send( query + ' is not defined. \n To define acronym: ```/acorn define NYT, The New York Times, http://www.nytimes.com ```');
+                  pRes.send( query + ' is not defined.' + defineHelp);
             } else {
-                var msg = 'Hey I\'m Acorn! :tree:  \n' + query.toUpperCase() + " is " + row[0].description;
+                var msg = hello + query.toUpperCase() + " is " + row[0].description;
 
                 if(row[0].url !== '') {
                     msg = msg + "\n Check out this URL: " + row[0].url;
