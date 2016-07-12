@@ -54,7 +54,51 @@ db.get("SELECT name FROM sqlite_master WHERE type='table' AND name='acronyms'", 
         // If first word is 'define', split by , and try to insert into DB
         // If first word is 'help' give list of help items
         var query = pReq.body.text;
-        console.log(query);
+        var commandSplit = query.split(' ');
+        var command = commandSplit[0];
+        var acorn = commandSplit[1];
+        console.log("INITIAL QUERY", query);
+        console.log("COMMAND IS", command.toUpperCase());
+        if (command.toUpperCase() == 'DEFINE') {
+            var definition = query.split(',');
+            if (definition.length < 3) {
+                pRes.send('Your definition is malformed. Please Try again');
+            } else {
+                    var acronym = definition[0].split(' ')[1]; // get rid of define
+                    var description = definition[1];
+                    var url = definition[2];
+                    console.log('Acronym to define: ', acronym);
+                    var sqlSelect = "SELECT * FROM 'acronyms' WHERE acronym = '" + acronym.toUpperCase() + "'";
+                     db.all(sqlSelect, function(err, row) {
+                       if(err !== null) {
+                         next(err);
+                       }
+                       else {
+                           // Acronym is new, add it
+                           if(row.length == 0) {
+                            console.log('Addding new acronym', acronym);
+                            console.log('Description is', description);
+                            console.log('URL is', url);
+                           sqlRequest = "INSERT INTO 'acronyms' (acronym, description, url) " +
+                                        "VALUES('" + acronym.toUpperCase() + "', '" + description + "', '" + url + "')";
+                           db.run(sqlRequest, function(err) {
+                             if(err !== null) {
+                               next(err);
+                             }
+                             else {
+                               console.log('success!');
+                               pRes.send( acronym + ' has been added to the dictionary. \n You can search for it with  ```/acorn ' + acronym + ' ```');
+                             }
+                           }); // end acronym insert
+                         } else {
+                             pRes.send('Acnonym Already Exists. \n You can search with ```/acorn ' + acorn + ' ```');
+                         }
+                       }
+                     }); // end duplicate check for acronym insert
+            }
+
+        } else {
+            console.log('acronym lookup');
         var sqlSelect = "SELECT * FROM 'acronyms' WHERE acronym = '" + query.toUpperCase() + "'";
         db.all(sqlSelect, function(err, row) {
           if(err !== null) {
@@ -63,50 +107,18 @@ db.get("SELECT name FROM sqlite_master WHERE type='table' AND name='acronyms'", 
           else {
               // Acronym is new, use it here
               if(row.length == 0) {
-                  pRes.send( query + ' is not defined. To define acronym: ```/acorn define NYT, The New York Times, http://www.nytimes.com ```');
+                  pRes.send( query + ' is not defined. \n To define acronym: ```/acorn define NYT, The New York Times, http://www.nytimes.com ```');
             } else {
-                pRes.send('Hey I\'m Acorn! :tree:  ' + query + " means " + row[1].description +
-                           " Check out this URL: " + row[1].url
+                pRes.send('Hey I\'m Acorn! :tree:  \n' + query + " is " + row[0].description +
+                           "\n Check out this URL: " + row[0].url
                     );
             }
         }
     });
+    } // end acronym lookup
 
     });
 
-    // We define a new route that will handle bookmark creation
-    app.post('/define', function(req, res, next) {
-        console.log(req.query);
-     var acronym = "SLOP";
-      var description = "Secret Life of Pets";
-      var url = "http://www.nytimes.com/2016/07/08/movies/the-secret-life-of-pets-review.html?_r=0";
-      var sqlSelect = "SELECT * FROM 'acronyms' WHERE acronym = '" + acronym + "'";
-      db.all(sqlSelect, function(err, row) {
-        if(err !== null) {
-          next(err);
-        }
-        else {
-            // Acronym is new, use it here
-            if(row.length == 0) {
-                res.send('that is a new acronym');
-            // sqlRequest = "INSERT INTO 'acronyms' (acronym, description, url) " +
-            //              "VALUES('" + acronym.toUpperCase() + "', '" + description + "', '" + url + "')";
-            // db.run(sqlRequest, function(err) {
-            //   if(err !== null) {
-            //     next(err);
-            //   }
-            //   else {
-            //     console.log('success!');
-            //     res.sendStatus(200);
-            //   }
-            // });
-          } else {
-              res.send('Acnonym Already Exists');
-          }
-        }
-      });
-
-    });
 
     app.listen(process.env.PORT, function () {
       console.log('Acorn listening on ' + process.env.PORT);
