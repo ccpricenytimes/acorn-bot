@@ -56,7 +56,6 @@ db.get("SELECT name FROM sqlite_master WHERE type='table' AND name='acronyms'", 
         var query = pReq.body.text;
         var commandSplit = query.split(' ');
         var command = commandSplit[0].toUpperCase();
-        var acorn = commandSplit[1].split(',')[0];
         console.log("INITIAL QUERY", query);
         console.log("COMMAND IS", command);
 
@@ -97,14 +96,15 @@ db.get("SELECT name FROM sqlite_master WHERE type='table' AND name='acronyms'", 
                              }
                            }); // end acronym insert
                          } else {
-                             pRes.send('Acnonym Already Exists. \n You can search with ```/acorn ' + acorn + ' ```');
+                            var acronymText = commandSplit[1].split(',')[0];
+                             pRes.send('Acnonym Already Exists. \n You can search with ```/acorn ' + acrnoymText + ' ```');
                          }
                        }
                      }); // end duplicate check for acronym insert
             }
 
         } else if(command == 'HELP') {
-            var helpText = 'Hello my name is acorn :tree: \n' +
+            var helpText = 'Hello ' + preq.body.user_name +' my name is acorn :tree: \n' +
             'I am a simple acronym bot \n' +
             'To look up an acronym say' +
             '``` /acorn NYT ```' +
@@ -125,7 +125,7 @@ db.get("SELECT name FROM sqlite_master WHERE type='table' AND name='acronyms'", 
             } else {
                 var msg = 'Hey I\'m Acorn! :tree:  \n' + query.toUpperCase() + " is " + row[0].description;
 
-                if(url !== '') {
+                if(row[0].url !== '') {
                     msg = msg + "\n Check out this URL: " + row[0].url;
                 }
                 pRes.send(msg);
