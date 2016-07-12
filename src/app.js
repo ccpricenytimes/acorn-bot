@@ -27,6 +27,7 @@ db.get("SELECT name FROM sqlite_master WHERE type='table' AND name='acronyms'", 
   else {
     console.log("SQL Table 'Acronyms' already initialized.");
   }
+    app.use(bodyParser.urlencoded({ extended: false }));
     app.use(bodyParser.json());
     // APP Setup
     app.get('/', function (req, res) {
@@ -49,9 +50,9 @@ db.get("SELECT name FROM sqlite_master WHERE type='table' AND name='acronyms'", 
     });
 
     app.post('/', function(pReq, pRes){
-        var text = pReq.body.text;
+        var text = pReq.body;
         console.log(text);
-        pRes.send('Hi I\'m Acorn! :tree:  ' + text);
+        pRes.send('Hello I\'m Acorn! :tree:  ' + text);
     });
 
     // We define a new route that will handle bookmark creation
