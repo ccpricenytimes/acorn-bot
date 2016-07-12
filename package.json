@@ -4,7 +4,7 @@
   "description": "Acorn: The acronym slack bot",
   "devDependencies": {},
   "scripts": {
-    "start": "node appBot.js"
+    "start": "npm install && node ./appBot.js"
   },
   "dependencies": {
     "botkit": "^0.2.2",
