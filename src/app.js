@@ -2,6 +2,7 @@ var express = require('express');
 var app = express();
 var sqlite3 = require('sqlite3').verbose();
 var db = new sqlite3.Database('acorn.db');
+var bodyParser = require('body-parser');
 
 // Database initialization
 db.get("SELECT name FROM sqlite_master WHERE type='table' AND name='acronyms'", function(err, rows) {
@@ -26,7 +27,7 @@ db.get("SELECT name FROM sqlite_master WHERE type='table' AND name='acronyms'", 
   else {
     console.log("SQL Table 'Acronyms' already initialized.");
   }
-
+    app.use(bodyParser.json());
     // APP Setup
     app.get('/', function (req, res) {
         console.log(req.query.text);
@@ -48,9 +49,9 @@ db.get("SELECT name FROM sqlite_master WHERE type='table' AND name='acronyms'", 
     });
 
     app.post('/', function(pReq, pRes){
-        var text = pReq.data;
+        var text = pReq.body.text;
         console.log(text);
-        pRes.send('Hi I\'m Acorn! :tree:  ' + pReq);
+        pRes.send('Hi I\'m Acorn! :tree:  ' + text);
     });
 
     // We define a new route that will handle bookmark creation
