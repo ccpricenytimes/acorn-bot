@@ -50,9 +50,25 @@ db.get("SELECT name FROM sqlite_master WHERE type='table' AND name='acronyms'", 
     });
 
     app.post('/', function(pReq, pRes){
-        var text = pReq.body;
-        console.log(text);
-        pRes.send('Hey I\'m Acorn! :tree:  ' + text.text);
+        var query = pReq.body.text;
+        console.log(query);
+        var sqlSelect = "SELECT * FROM 'acronyms' WHERE acronym = '" + query.toUpperCase() + "'";
+        db.all(sqlSelect, function(err, row) {
+          if(err !== null) {
+            next(err);
+          }
+          else {
+              // Acronym is new, use it here
+              if(row.length == 0) {
+                  pRes.send('that is a new acronym, setting definitions coming soon');
+            } else {
+                pRes.send('Hey I\'m Acorn! :tree:  ' + query + " means " + row[1].description +
+                           " Check out this URL: " + row[1].url
+                    );
+            }
+        }
+    });
+
     });
 
     // We define a new route that will handle bookmark creation
@@ -71,7 +87,7 @@ db.get("SELECT name FROM sqlite_master WHERE type='table' AND name='acronyms'", 
             if(row.length == 0) {
                 res.send('that is a new acronym');
             // sqlRequest = "INSERT INTO 'acronyms' (acronym, description, url) " +
-            //              "VALUES('" + acronym + "', '" + description + "', '" + url + "')";
+            //              "VALUES('" + acronym.toUpperCase() + "', '" + description + "', '" + url + "')";
             // db.run(sqlRequest, function(err) {
             //   if(err !== null) {
             //     next(err);
