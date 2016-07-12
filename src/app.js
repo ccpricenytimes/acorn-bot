@@ -37,7 +37,7 @@ db.get("SELECT name FROM sqlite_master WHERE type='table' AND name='acronyms'", 
             // Express handles errors via its next function.
             // It will call the next operation layer (middleware),
             // which is by default one that handles errors.
-            next(err);
+           pRes.send('Database Error');
           }
           else {
             console.log(row);
@@ -84,7 +84,7 @@ db.get("SELECT name FROM sqlite_master WHERE type='table' AND name='acronyms'", 
                     var sqlSelect = "SELECT * FROM 'acronyms' WHERE acronym = '" + acronym.toUpperCase() + "'";
                      db.all(sqlSelect, function(err, row) {
                        if(err !== null) {
-                         next(err);
+                        pRes.send('Database Error');
                        }
                        else {
                            // Acronym is new, add it
@@ -96,7 +96,7 @@ db.get("SELECT name FROM sqlite_master WHERE type='table' AND name='acronyms'", 
                                         "VALUES('" + acronym.toUpperCase() + "', '" + description + "', '" + url + "')";
                            db.run(sqlRequest, function(err) {
                              if(err !== null) {
-                               next(err);
+                              pRes.send('Database Error');
                              }
                              else {
                                console.log('success!');
@@ -117,17 +117,32 @@ db.get("SELECT name FROM sqlite_master WHERE type='table' AND name='acronyms'", 
             lookupHelp + defineHelp;
             pRes.send(helpText);
 
+        } else if(command == 'DELETE') {
+            var acronym = commandSplit[1]; // get rid of define
+            var sqlSelect = "DELETE FROM 'acronyms' WHERE acronym = '" + acronym.toUpperCase() + "'";
+            console.log('SQL: ', sqlSelect);
+            db.all(sqlSelect, function(err, row) {
+              if(err !== null) {
+                console.log(err);
+                pRes.send('Database Error');
+              }
+              else {
+                console.log(row);
+                pRes.send(acronym + ' successfully Deleted');
+              }
+          });
+
         } else {
             console.log('acronym lookup');
         var sqlSelect = "SELECT * FROM 'acronyms' WHERE acronym = '" + query.toUpperCase() + "'";
         db.all(sqlSelect, function(err, row) {
           if(err !== null) {
-            next(err);
+           pRes.send('Database Error');
           }
           else {
               // Acronym is new, use it here
               if(row.length == 0) {
-                  pRes.send( query + ' is not defined.' + defineHelp);
+                  pRes.send( query.toUpperCase() + ' is not defined.' + defineHelp);
             } else {
                 var msg = hello + query.toUpperCase() + " is " + row[0].description;
 
