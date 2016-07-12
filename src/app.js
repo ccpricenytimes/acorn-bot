@@ -50,7 +50,7 @@ db.get("SELECT name FROM sqlite_master WHERE type='table' AND name='acronyms'", 
     app.post('/', function(pReq, pRes){
         var text = pReq.data;
         console.log(text);
-        pRes.send('Hi I\'m Acorn! :tree:  ' + text);
+        pRes.send('Hi I\'m Acorn! :tree:  ' + pReq.text +  "  "+ pReq.user_name);
     });
 
     // We define a new route that will handle bookmark creation
