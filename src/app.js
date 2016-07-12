@@ -63,7 +63,7 @@ db.get("SELECT name FROM sqlite_master WHERE type='table' AND name='acronyms'", 
           else {
               // Acronym is new, use it here
               if(row.length == 0) {
-                  pRes.send('that is not defined. To define acronym type ```/acorn define aronym, acornym definition, optional url to more info```');
+                  pRes.send( query + ' is not defined. To define acronym: ```/acorn define NYT, The New York Times, http://www.nytimes.com ```');
             } else {
                 pRes.send('Hey I\'m Acorn! :tree:  ' + query + " means " + row[1].description +
                            " Check out this URL: " + row[1].url
