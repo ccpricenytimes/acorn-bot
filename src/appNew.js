@@ -63,7 +63,9 @@ var globalLogs = '';
 
         // DEFINE AN ACRONYM
         if (command == 'DEFINE') {
+          console.log(query);
             var definition = query.split(',');
+            console.log(definition);
             if (definition.length < 2) {
                 pRes.send('Your definition is malformed. Please Try again' + confused);
             } else {
@@ -73,36 +75,69 @@ var globalLogs = '';
                     if(definition.length === 3) {
                         var url = definition[2];
                     }
+                    var numRows = 0;
                     console.log('Acronym to define: ', acronym);
-                    var sqlSelect = "SELECT * FROM 'acronyms' WHERE acronym = '" + acronym.toUpperCase() + "'";
+                    var insertCallback = function(auth) {
+                      console.log('entering insert');
+                      var google = require('googleapis');
+                      var sheets = google.sheets('v4');
+                      var range = 'Acronym Data!A' + numRows +':D' + numRows;
+                      var id = numRows - 2;
+                      var options = {
 
-                     // db.all(sqlSelect, function(err, row) {
-                     //   if(err !== null) {
-                     //    pRes.send('Database Error');
-                     //   }
-                     //   else {
-                     //       // Acronym is new, add it
-                     //       if(row.length == 0) {
-                     //        console.log('Addding new acronym', acronym);
-                     //        console.log('Description is', description);
-                     //        console.log('URL is', url);
-                     //       sqlRequest = "INSERT INTO 'acronyms' (acronym, description, url) " +
-                     //                    "VALUES('" + acronym.toUpperCase() + "', '" + description + "', '" + url + "')";
-                     //       db.run(sqlRequest, function(err) {
-                     //         if(err !== null) {
-                     //          pRes.send('Database Error');
-                     //         }
-                     //         else {
-                     //           console.log('success!');
-                     //           pRes.send( acronym + ' has been added to the dictionary.' + lookupHelp);
-                     //         }
-                     //       }); // end acronym insert
-                     //     } else {
-                     //        var acronymText = commandSplit[1].split(',')[0];
-                     //         pRes.send('Acnonym Already Exists. \n You can search with ```/acorn ' + acrnoymText + ' ```' + confused);
-                     //     }
-                     //   }
-                     // }); // end duplicate check for acronym insert
+                      }
+                      sheets.spreadsheets.values.update({
+                        "auth": auth,
+                        "spreadsheetId": '1j07CCJR3Ff1KfFeNUmsAryM6Ra7z_Qp_SKMWaRpiYZc',
+                        "valueInputOption": "RAW",
+                        "range": range,
+                        "resource": {
+                          "range": range,
+                          "majorDimension": "ROWS",
+                          "values": [[id, acronym, description, url]]
+                        }
+                      }, function(err, response) {
+                        if (err) {
+                          console.log('The API returned an error: ' + err);
+                          return;
+                        }
+                        console.log('success!');
+                        pRes.send( acronym + ' has been added to the dictionary.' + lookupHelp);
+                      });
+                    };
+                    var insertAcronym = function (auth) {
+                      var google = require('googleapis');
+                      var sheets = google.sheets('v4');
+                      sheets.spreadsheets.values.get({
+                        auth: auth,
+                        spreadsheetId: '1j07CCJR3Ff1KfFeNUmsAryM6Ra7z_Qp_SKMWaRpiYZc',
+                        range: 'Acronym Data!A2:D',
+                      }, function(err, response) {
+                        if (err) {
+                          console.log('The API returned an error: ' + err);
+                          return;
+                        }
+                        var acronymText = commandSplit[1].split(',')[0];
+                        var rows = response.values;
+                        console.log('number of rows', rows.length);
+                        numRows = rows.length + 2;
+                        var found = false;
+                        for (var i = 0; i < rows.length; i++) {
+                          var row = rows[i];
+                          console.log(row[1], acronymText);
+                          if(row[1].toUpperCase() == acronymText.toUpperCase()) {
+                            found = true;
+                            break;
+                          }
+                        }
+                        if (found) {
+                          pRes.send('Acnonym Already Exists. \n You can search with ```/acorn ' + acronymText + ' ```' + confused);
+                        } else {
+                          api(insertCallback);
+                        }
+                      });
+                    };
+                    api(insertAcronym);
             }
 
         } else if(command == 'HELP') {
@@ -110,21 +145,6 @@ var globalLogs = '';
             'I am a simple acronym bot' +
             lookupHelp + defineHelp;
             pRes.send(helpText);
-
-        } else if(command == 'DELETE') {
-            var acronym = commandSplit[1]; // get rid of define
-            var sqlSelect = "DELETE FROM 'acronyms' WHERE acronym = '" + acronym.toUpperCase() + "'";
-            console.log('SQL: ', sqlSelect);
-          //   db.all(sqlSelect, function(err, row) {
-          //     if(err !== null) {
-          //       console.log(err);
-          //       pRes.send('Database Error');
-          //     }
-          //     else {
-          //       console.log(row);
-          //       pRes.send(acronym + ' successfully Deleted');
-          //     }
-          // });
 
         } else {
             console.log('acronym lookup');
@@ -207,7 +227,7 @@ var globalLogs = '';
             }
           }
         });
-      }
+      };
       console.log('about to call API');
       api(listAcronyms);
     }); // end of server setup

@@ -6,7 +6,7 @@ module.exports = function(callback, callbackTwo) {
 
 // If modifying these scopes, delete your previously saved credentials
 // at ~/.credentials/sheets.googleapis.com-nodejs-quickstart.json
-var SCOPES = ['https://www.googleapis.com/auth/spreadsheets.readonly'];
+var SCOPES = ['https://www.googleapis.com/auth/spreadsheets'];
 // var TOKEN_DIR = (process.env.HOME || process.env.HOMEPATH ||
 //     process.env.USERPROFILE) + '/.credentials/';
 // var TOKEN_PATH = TOKEN_DIR + 'sheets.googleapis.com-nodejs-quickstart.json';
@@ -62,7 +62,7 @@ function getNewToken(oauth2Client, callback, callbackTwo) {
   //   scope: SCOPES
   // });
   // console.log('Authorize this app by visiting this url: ', authUrl);
-    oauth2Client.getToken("4/zBVYABCDpJo08LWNxqmvjDH7eHxuLzXvUarqzUZLSrI", function(err, token) {
+    oauth2Client.getToken("4/7a9jp8uFV_x7CQisiObnfpWvow0eY4wu0rTCJMTeSq0", function(err, token) {
       if (err) {
         var str = 'CANT GET NEW TOKEN' + err;
         callbackTwo(str);
@@ -81,15 +81,14 @@ function getNewToken(oauth2Client, callback, callbackTwo) {
  * @param {Object} token The token to store to disk.
  */
 function storeToken(token) {
-  try {
-    fs.mkdirSync(TOKEN_DIR);
-  } catch (err) {
-    if (err.code != 'EEXIST') {
-      throw err;
-    }
-  }
-  fs.writeFile(TOKEN_PATH, JSON.stringify(token));
-  console.log('Token stored to ' + TOKEN_PATH);
+  // try {
+  //   fs.mkdirSync(TOKEN_DIR);
+  // } catch (err) {
+  //   if (err.code != 'EEXIST') {
+  //     throw err;
+  //   }
+  // }
+  fs.writeFile('token.json', JSON.stringify(token));
 }
 
 }
