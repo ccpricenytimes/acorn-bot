@@ -2,7 +2,7 @@ var fs = require('fs');
 var google = require('googleapis');
 var googleAuth = require('google-auth-library');
 
-module.exports = function(callback) {
+module.exports = function(callback, callbackTwo) {
 
 // If modifying these scopes, delete your previously saved credentials
 // at ~/.credentials/sheets.googleapis.com-nodejs-quickstart.json
@@ -14,12 +14,13 @@ var TOKEN_PATH = TOKEN_DIR + 'sheets.googleapis.com-nodejs-quickstart.json';
 // Load client secrets from a local file.
 fs.readFile('client_secret.json', function processClientSecrets(err, content) {
   if (err) {
-    console.log('Error loading client secret file: ' + err);
+    var str = 'Error loading client secret file: ' + err;
+    callbackTwo(str);
     return;
   }
   // Authorize a client with the loaded credentials, then call the
   // Google Sheets API.
-  authorize(JSON.parse(content), callback);
+  authorize(JSON.parse(content), callback, callbackTwo);
 });
 
 /**
@@ -29,7 +30,7 @@ fs.readFile('client_secret.json', function processClientSecrets(err, content) {
  * @param {Object} credentials The authorization client credentials.
  * @param {function} callback The callback to call with the authorized client.
  */
-function authorize(credentials, callback) {
+function authorize(credentials, callback, callbackTwo) {
   var clientSecret = credentials.installed.client_secret;
   var clientId = credentials.installed.client_id;
   var redirectUrl = credentials.installed.redirect_uris[0];
@@ -39,7 +40,7 @@ function authorize(credentials, callback) {
   // Check if we have previously stored a token.
   fs.readFile(TOKEN_PATH, function(err, token) {
     if (err) {
-      getNewToken(oauth2Client, callback);
+      getNewToken(oauth2Client, callback, callbackTwo);
     } else {
       oauth2Client.credentials = JSON.parse(token);
       callback(oauth2Client);
@@ -55,7 +56,7 @@ function authorize(credentials, callback) {
  * @param {getEventsCallback} callback The callback to call with the authorized
  *     client.
  */
-function getNewToken(oauth2Client, callback) {
+function getNewToken(oauth2Client, callback, callbackTwo) {
   var authUrl = oauth2Client.generateAuthUrl({
     access_type: 'offline',
     scope: SCOPES
@@ -63,7 +64,9 @@ function getNewToken(oauth2Client, callback) {
   console.log('Authorize this app by visiting this url: ', authUrl);
     oauth2Client.getToken("4/hDCI2kpKHDku9kJ6t4ls-HBXNCqMQVhpdQ-y5kAUMec", function(err, token) {
       if (err) {
-        console.log('Error while trying to retrieve access token', err);
+        var str = 'CANT GET NEW TOKEN' + err;
+        callbackTwo(str);
+        //console.log('Error while trying to retrieve access token', err);
         return;
       }
       oauth2Client.credentials = token;

@@ -9,6 +9,9 @@ var api = require('./sheetsApi');
     // APP Setup
     app.get('/', function (req, res) {
       console.log('running basic get');
+      var errorCallback = function(str) {
+        res.send('BROKEN: ' + str);
+      };
       var getList = function(auth) {
       var sheets = google.sheets('v4');
       sheets.spreadsheets.values.get({
@@ -35,7 +38,7 @@ var api = require('./sheetsApi');
       });
     };
 
-    api(getList);
+    api(getList, errorCallback);
     });
 
     app.post('/', function(pReq, pRes) {
