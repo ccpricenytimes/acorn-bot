@@ -3,6 +3,7 @@ var app = express();
 var sqlite3 = require('sqlite3').verbose();
 var db = new sqlite3.Database('acorn.db');
 var bodyParser = require('body-parser');
+var api = require('./sheetsApi');
 
 // Database initialization
 db.get("SELECT name FROM sqlite_master WHERE type='table' AND name='acronyms'", function(err, rows) {
@@ -160,7 +161,39 @@ db.get("SELECT name FROM sqlite_master WHERE type='table' AND name='acronyms'", 
 
     app.listen(process.env.PORT, function () {
       console.log('Acorn listening on ' + process.env.PORT);
-    });
+
+      /**
+       * Print the names and majors of students in a sample spreadsheet:
+       * https://docs.google.com/spreadsheets/d/1j07CCJR3Ff1KfFeNUmsAryM6Ra7z_Qp_SKMWaRpiYZc/edit
+       */
+      var listAcronyms = function (auth) {
+        var google = require('googleapis');
+        var sheets = google.sheets('v4');
+        sheets.spreadsheets.values.get({
+          auth: auth,
+          spreadsheetId: '1j07CCJR3Ff1KfFeNUmsAryM6Ra7z_Qp_SKMWaRpiYZc',
+          range: 'Acronym Data!A2:D',
+        }, function(err, response) {
+          if (err) {
+            console.log('The API returned an error: ' + err);
+            return;
+          }
+          var rows = response.values;
+          if (rows.length == 0) {
+            console.log('No data found.');
+          } else {
+            console.log('Acronym, Definition, URL:');
+            for (var i = 0; i < rows.length; i++) {
+              var row = rows[i];
+              // Print all columns
+              console.log('%s, %s, %s', row[0], row[1], row[2]);
+            }
+          }
+        });
+      }
+      console.log('about to call API');
+      api(listAcronyms);
+    }); // end of server setup
 
 });
 

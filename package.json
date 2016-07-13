@@ -4,12 +4,14 @@
   "description": "Acorn: The acronym slack bot",
   "devDependencies": {},
   "scripts": {
-    "start": "npm install && node ./src/app.js"
+    "start": "npm install && node ./src/appNew.js"
   },
   "dependencies": {
     "body-parser": "^1.15.2",
     "botkit": "^0.2.2",
     "express": "^4.14.0",
+    "google-auth-library": "^0.9.8",
+    "googleapis": "^11.0.0",
     "sqlite3": "^3.1.4"
   }
 }
