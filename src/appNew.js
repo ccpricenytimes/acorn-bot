@@ -57,6 +57,7 @@ var globalLogs = '';
         // If first word is 'help' give list of help items
         var query = pReq.body.text;
         var commandSplit = query.split(' ');
+        var userName= pReq.body.user_name;
         var command = commandSplit[0].toUpperCase();
         console.log("INITIAL QUERY", query);
         console.log("COMMAND IS", command);
