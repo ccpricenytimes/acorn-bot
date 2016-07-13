@@ -45,7 +45,7 @@ var globalLogs = '';
     app.post('/', function(pReq, pRes) {
 
         // Some Text Definitions
-        var line = "-------------------------------------------------------------------------------------------------";
+        var line = "\n-------------------------------------------------------------------------------------------------\n";
         var hello = "Hello " + pReq.body.user_name + " I\'m Acorn. :tree: \n";
         var confused = "\n Confused? Type `/acorn help`";
         var lookupHelp = '\nTo look up an acronym type:' + '``` /acorn *acronym* ```\n';
@@ -180,7 +180,7 @@ var globalLogs = '';
               if(foundAc == '') {
                 pRes.send( query.toUpperCase() + ' is not defined. :unicorn_face:' + defineHelp + line);
               } else {
-                  var msg = hello + "------" + foundAc.toUpperCase() + " is " + foundDes + " :books:";
+                  var msg = hello + "\n------\n" + foundAc.toUpperCase() + " is " + foundDes + " :books:";
 
                   if(foundUrl !== '' && foundUrl !== undefined) {
                       msg = msg + "\n Check out this URL: " + foundUrl;
