@@ -83,7 +83,7 @@ var globalLogs = '';
                       console.log('entering insert');
                       var google = require('googleapis');
                       var sheets = google.sheets('v4');
-                      var range = 'Acronym Data!A' + numRows +':D' + (numRows + 1);
+                      var range = 'Acronym Data!A' + numRows +':E' + numRows;
                       var id = numRows - 2;
                       var options = {
 
