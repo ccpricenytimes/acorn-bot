@@ -83,7 +83,7 @@ var globalLogs = '';
                       console.log('entering insert');
                       var google = require('googleapis');
                       var sheets = google.sheets('v4');
-                      var range = 'Acronym Data!A' + numRows +':D' + numRows;
+                      var range = 'Acronym Data!A' + numRows +':D' + (numRows + 1);
                       var id = numRows - 2;
                       var options = {
 
@@ -96,7 +96,7 @@ var globalLogs = '';
                         "resource": {
                           "range": range,
                           "majorDimension": "ROWS",
-                          "values": [[id, acronym, description, url, pReq.body.user_name]]
+                          "values": [[id, acronym, description, url, userName]]
                         }
                       }, function(err, response) {
                         if (err) {
