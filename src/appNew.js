@@ -45,6 +45,7 @@ var globalLogs = '';
     app.post('/', function(pReq, pRes) {
 
         // Some Text Definitions
+        var line = "-------------------------------------------------------------------------------------------------";
         var hello = "Hello " + pReq.body.user_name + " I\'m Acorn. :tree: \n";
         var confused = "\n Confused? Type `/acorn help`";
         var lookupHelp = '\nTo look up an acronym type:' + '``` /acorn *acronym* ```\n';
@@ -67,7 +68,7 @@ var globalLogs = '';
             var definition = query.split(',');
             console.log(definition);
             if (definition.length < 2) {
-                pRes.send('Your definition is malformed. Please Try again' + confused);
+                pRes.send('Your definition is malformed. :grimacing: Please Try again' + confused);
             } else {
                     var acronym = definition[0].split(' ')[1]; // get rid of define
                     var description = definition[1];
@@ -102,7 +103,7 @@ var globalLogs = '';
                           return;
                         }
                         console.log('success!');
-                        pRes.send( acronym + ' has been added to the dictionary.' + lookupHelp);
+                        pRes.send( acronym + ' has been added to the dictionary. :information_desk_person:' + lookupHelp + line);
                       });
                     };
                     var insertAcronym = function (auth) {
@@ -131,7 +132,7 @@ var globalLogs = '';
                           }
                         }
                         if (found) {
-                          pRes.send('Acnonym Already Exists. \n You can search with ```/acorn ' + acronymText + ' ```' + confused);
+                          pRes.send('Acnonym Already Exists. :upside_down_face: \n You can search with ```/acorn ' + acronymText + ' ```' + confused + line);
                         } else {
                           api(insertCallback);
                         }
@@ -142,8 +143,9 @@ var globalLogs = '';
 
         } else if(command == 'HELP') {
             var helpText = hello +
-            'I am a simple acronym bot' +
-            lookupHelp + defineHelp;
+            'I am a simple acronym bot :robot_face:' +
+            lookupHelp + defineHelp +
+            '\n Please Note: & are not currently supported in acronyms or definitions' + line;
             pRes.send(helpText);
 
         } else {
@@ -176,13 +178,14 @@ var globalLogs = '';
                 }
               }
               if(foundAc == '') {
-                pRes.send( query.toUpperCase() + ' is not defined.' + defineHelp);
+                pRes.send( query.toUpperCase() + ' is not defined. :unicorn_face:' + defineHelp + line);
               } else {
-                  var msg = hello + foundAc.toUpperCase() + " is " + foundDes;
+                  var msg = hello + "------" + foundAc.toUpperCase() + " is " + foundDes + " :books:";
 
                   if(foundUrl !== '' && foundUrl !== undefined) {
                       msg = msg + "\n Check out this URL: " + foundUrl;
                   }
+                  msg = msg + line;
                   pRes.send(msg);
               }
             }
