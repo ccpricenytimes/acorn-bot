@@ -123,51 +123,50 @@ var api = require('./sheetsApi');
           // });
 
         } else {
-            pRes.send('got to acronym lookup');
             console.log('acronym lookup');
-        //   var getAcronym = function(auth) {
-        //   var sheets = google.sheets('v4');
-        //   sheets.spreadsheets.values.get({
-        //     auth: auth,
-        //     spreadsheetId: '1j07CCJR3Ff1KfFeNUmsAryM6Ra7z_Qp_SKMWaRpiYZc',
-        //     range: 'Acronym Data!A2:D',
-        //   }, function(err, response) {
-        //     if (err) {
-        //       console.log('The API returned an error: ' + err);
-        //       return;
-        //     }
-        //     var rows = response.values;
-        //     if (rows.length == 0) {
-        //       console.log('No data found.');
-        //     } else {
-        //       var foundAc = '';
-        //       var foundDes = '';
-        //       var foundUrl = '';
-        //       for (var i = 0; i < rows.length; i++) {
-        //         var row = rows[i];
-        //         if(row[1].toUpperCase() == query.toUpperCase()) {
-        //           foundAc = row[1];
-        //           foundDes = row[2];
-        //           foundUrl = row[3];
-        //           break;
-        //         }
-        //       }
-        //       if(foundAc == '') {
-        //         pRes.send( query.toUpperCase() + ' is not defined.' + defineHelp);
-        //       } else {
-        //           var msg = hello + foundAc.toUpperCase() + " is " + foundDes;
+          var getAcronym = function(auth) {
+          var sheets = google.sheets('v4');
+          sheets.spreadsheets.values.get({
+            auth: auth,
+            spreadsheetId: '1j07CCJR3Ff1KfFeNUmsAryM6Ra7z_Qp_SKMWaRpiYZc',
+            range: 'Acronym Data!A2:D',
+          }, function(err, response) {
+            if (err) {
+              console.log('The API returned an error: ' + err);
+              return;
+            }
+            var rows = response.values;
+            if (rows.length == 0) {
+              console.log('No data found.');
+            } else {
+              var foundAc = '';
+              var foundDes = '';
+              var foundUrl = '';
+              for (var i = 0; i < rows.length; i++) {
+                var row = rows[i];
+                if(row[1].toUpperCase() == query.toUpperCase()) {
+                  foundAc = row[1];
+                  foundDes = row[2];
+                  foundUrl = row[3];
+                  break;
+                }
+              }
+              if(foundAc == '') {
+                pRes.send( query.toUpperCase() + ' is not defined.' + defineHelp);
+              } else {
+                  var msg = hello + foundAc.toUpperCase() + " is " + foundDes;
 
-        //           if(foundUrl !== '' && foundUrl !== undefined) {
-        //               msg = msg + "\n Check out this URL: " + foundUrl;
-        //           }
-        //           pRes.send(msg);
-        //       }
-        //     }
+                  if(foundUrl !== '' && foundUrl !== undefined) {
+                      msg = msg + "\n Check out this URL: " + foundUrl;
+                  }
+                  pRes.send(msg);
+              }
+            }
 
-        //   });
-        // };
+          });
+        };
 
-        // api(getAcronym);
+        api(getAcronym);
     } // end acronym lookup
 
     });
