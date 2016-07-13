@@ -7,9 +7,9 @@ module.exports = function(callback, callbackTwo) {
 // If modifying these scopes, delete your previously saved credentials
 // at ~/.credentials/sheets.googleapis.com-nodejs-quickstart.json
 var SCOPES = ['https://www.googleapis.com/auth/spreadsheets.readonly'];
-var TOKEN_DIR = (process.env.HOME || process.env.HOMEPATH ||
-    process.env.USERPROFILE) + '/.credentials/';
-var TOKEN_PATH = TOKEN_DIR + 'sheets.googleapis.com-nodejs-quickstart.json';
+// var TOKEN_DIR = (process.env.HOME || process.env.HOMEPATH ||
+//     process.env.USERPROFILE) + '/.credentials/';
+// var TOKEN_PATH = TOKEN_DIR + 'sheets.googleapis.com-nodejs-quickstart.json';
 
 // Load client secrets from a local file.
 fs.readFile('client_secret.json', function processClientSecrets(err, content) {
@@ -36,10 +36,10 @@ function authorize(credentials, callback, callbackTwo) {
   var redirectUrl = credentials.installed.redirect_uris[0];
   var auth = new googleAuth();
   var oauth2Client = new auth.OAuth2(clientId, clientSecret, redirectUrl);
-
   // Check if we have previously stored a token.
-  fs.readFile(TOKEN_PATH, function(err, token) {
+  fs.readFile('token.json', function(err, token) {
     if (err) {
+      console.log('didnt work');
       getNewToken(oauth2Client, callback, callbackTwo);
     } else {
       oauth2Client.credentials = JSON.parse(token);
@@ -57,12 +57,12 @@ function authorize(credentials, callback, callbackTwo) {
  *     client.
  */
 function getNewToken(oauth2Client, callback, callbackTwo) {
-  var authUrl = oauth2Client.generateAuthUrl({
-    access_type: 'offline',
-    scope: SCOPES
-  });
-  console.log('Authorize this app by visiting this url: ', authUrl);
-    oauth2Client.getToken("4/hDCI2kpKHDku9kJ6t4ls-HBXNCqMQVhpdQ-y5kAUMec", function(err, token) {
+  // var authUrl = oauth2Client.generateAuthUrl({
+  //   access_type: 'offline',
+  //   scope: SCOPES
+  // });
+  // console.log('Authorize this app by visiting this url: ', authUrl);
+    oauth2Client.getToken("4/zBVYABCDpJo08LWNxqmvjDH7eHxuLzXvUarqzUZLSrI", function(err, token) {
       if (err) {
         var str = 'CANT GET NEW TOKEN' + err;
         callbackTwo(str);

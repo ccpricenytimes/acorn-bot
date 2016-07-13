@@ -3,6 +3,7 @@ var app = express();
 var google = require('googleapis');
 var bodyParser = require('body-parser');
 var api = require('./sheetsApi');
+var globalLogs = '';
 
     app.use(bodyParser.urlencoded({ extended: false }));
     app.use(bodyParser.json());
