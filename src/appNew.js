@@ -95,7 +95,7 @@ var globalLogs = '';
                         "resource": {
                           "range": range,
                           "majorDimension": "ROWS",
-                          "values": [[id, acronym, description, url, pRes.body.user_name]]
+                          "values": [[id, acronym, description, url, pReq.body.user_name]]
                         }
                       }, function(err, response) {
                         if (err) {
