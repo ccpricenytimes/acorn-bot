@@ -59,8 +59,8 @@ var spreadsheetId = '1j07CCJR3Ff1KfFeNUmsAryM6Ra7z_Qp_SKMWaRpiYZc';
         var confused = "\n Confused? Type `/acorn help`";
         var lookupHelp = '\nTo look up an acronym type:' + '``` /acorn acronym ```\n';
         var defineHelp = '\n To define an acronym type:' +
-            '```/acorn define MYACRONYM| The Definition of My Acronym| http://www.optionalSiteToExplainMore.com ```' +
-            '\n Remember the `,` in between';
+            '```/acorn define MYACRONYM | The Definition of My Acronym | http://www.optionalSiteToExplainMore.com ```' +
+            '\n Remember the `|` (pipe) in between';
         var funFact = "\nFun Fact: You can add emojis to your definitions by typing them in slack format :simple_smile: \n";
 
         var query = pReq.body.text;
