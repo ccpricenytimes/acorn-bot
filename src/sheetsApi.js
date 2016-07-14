@@ -39,8 +39,11 @@ function authorize(credentials, callback, callbackTwo) {
   // Check if we have previously stored a token.
   fs.readFile('token.json', function(err, token) {
     if (err) {
-      console.log('didnt work');
-      getNewToken(oauth2Client, callback, callbackTwo);
+      oauth2Client.credentials = JSON.parse(process.env.API_TOKEN);
+      storeToken(process.env.API_TOKEN);
+      callback(oauth2Client);
+      // console.log('didnt work');
+      // getNewToken(oauth2Client, callback, callbackTwo);
     } else {
       oauth2Client.credentials = JSON.parse(token);
       callback(oauth2Client);
@@ -56,24 +59,24 @@ function authorize(credentials, callback, callbackTwo) {
  * @param {getEventsCallback} callback The callback to call with the authorized
  *     client.
  */
-function getNewToken(oauth2Client, callback, callbackTwo) {
-  // var authUrl = oauth2Client.generateAuthUrl({
-  //   access_type: 'offline',
-  //   scope: SCOPES
-  // });
-  // console.log('Authorize this app by visiting this url: ', authUrl);
-    oauth2Client.getToken("4/7a9jp8uFV_x7CQisiObnfpWvow0eY4wu0rTCJMTeSq0", function(err, token) {
-      if (err) {
-        var str = 'CANT GET NEW TOKEN' + err;
-        callbackTwo(str);
-        //console.log('Error while trying to retrieve access token', err);
-        return;
-      }
-      oauth2Client.credentials = token;
-      storeToken(token);
-      callback(oauth2Client);
-    });
-}
+// function getNewToken(oauth2Client, callback, callbackTwo) {
+//   // var authUrl = oauth2Client.generateAuthUrl({
+//   //   access_type: 'offline',
+//   //   scope: SCOPES
+//   // });
+//   // console.log('Authorize this app by visiting this url: ', authUrl);
+//     oauth2Client.getToken("4/7a9jp8uFV_x7CQisiObnfpWvow0eY4wu0rTCJMTeSq0", function(err, token) {
+//       if (err) {
+//         var str = 'CANT GET NEW TOKEN' + err;
+//         callbackTwo(str);
+//         //console.log('Error while trying to retrieve access token', err);
+//         return;
+//       }
+//       oauth2Client.credentials = token;
+//       storeToken(token);
+//       callback(oauth2Client);
+//     });
+// }
 
 /**
  * Store token to disk be used in later program executions.
@@ -81,14 +84,7 @@ function getNewToken(oauth2Client, callback, callbackTwo) {
  * @param {Object} token The token to store to disk.
  */
 function storeToken(token) {
-  // try {
-  //   fs.mkdirSync(TOKEN_DIR);
-  // } catch (err) {
-  //   if (err.code != 'EEXIST') {
-  //     throw err;
-  //   }
-  // }
-  fs.writeFile('token.json', JSON.stringify(token));
+  fs.writeFile('token.json', token);
 }
 
 }
