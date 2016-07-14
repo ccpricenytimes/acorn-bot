@@ -8,7 +8,6 @@ config:
    type: secret
    info: JSON FOR API TOKEN
    global: true
- config:
  - name: SLACK_TOKEN
    friendly_name: SLACK TOKEN
    type: secret
