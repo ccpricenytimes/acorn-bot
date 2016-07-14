@@ -49,10 +49,11 @@ var spreadsheetId = '1j07CCJR3Ff1KfFeNUmsAryM6Ra7z_Qp_SKMWaRpiYZc';
         var line = "\n-------------------------------------------------------------------------------------------------\n";
         var hello = "Hello " + pReq.body.user_name + " I\'m Acorn. :tree: \n";
         var confused = "\n Confused? Type `/acorn help`";
-        var lookupHelp = '\nTo look up an acronym type:' + '``` /acorn *acronym* ```\n';
+        var lookupHelp = '\nTo look up an acronym type:' + '``` /acorn acronym ```\n';
         var defineHelp = '\n To define an acronym type:' +
-            '```/acorn define *MYACRONYM*, The Definition of My Acronym, http://www.optionalSiteToExplainMore.com ```' +
+            '```/acorn define MYACRONYM, The Definition of My Acronym, http://www.optionalSiteToExplainMore.com ```' +
             '\n Remember the `,` in between';
+        var funFact = "\nFun Fact: You can add emojis to your definitions by typing them in slack format :simple_smile: \n";
 
         // If first word is 'define', split by , and try to insert into DB
         // If first word is 'help' give list of help items
@@ -127,7 +128,6 @@ var spreadsheetId = '1j07CCJR3Ff1KfFeNUmsAryM6Ra7z_Qp_SKMWaRpiYZc';
                         var found = false;
                         for (var i = 0; i < rows.length; i++) {
                           var row = rows[i];
-                          logger.info(row[1], acronymText);
                           if(row[1].toUpperCase() == acronymText.toUpperCase()) {
                             found = true;
                             break;
@@ -147,7 +147,7 @@ var spreadsheetId = '1j07CCJR3Ff1KfFeNUmsAryM6Ra7z_Qp_SKMWaRpiYZc';
             var helpText = hello +
             'I am a simple acronym bot :robot_face:' +
             lookupHelp + defineHelp +
-            '\n Please Note: & are not currently supported in acronyms or definitions' + line;
+            '\n Please Note: & are not currently supported in acronyms or definitions' + funFact + line;
             pRes.send(helpText);
 
         } else {
@@ -218,13 +218,14 @@ var spreadsheetId = '1j07CCJR3Ff1KfFeNUmsAryM6Ra7z_Qp_SKMWaRpiYZc';
           }
           var rows = response.values;
           if (rows.length == 0) {
-            logger.info('No data found.');
+            logger.info('No data found!!!!');
           } else {
-            logger.info('Acronym, Definition, URL:');
+            logger.info('Call made successfully');
+            //logger.info('Acronym, Definition, URL:');
             for (var i = 0; i < rows.length; i++) {
               var row = rows[i];
               // Print all columns
-              logger.info('%s, %s, %s', row[0], row[1], row[2]);
+              //logger.info('%s, %s, %s', row[0], row[1], row[2]);
             }
           }
         });
