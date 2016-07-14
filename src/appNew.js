@@ -59,7 +59,7 @@ var spreadsheetId = '1j07CCJR3Ff1KfFeNUmsAryM6Ra7z_Qp_SKMWaRpiYZc';
         var confused = "\n Confused? Type `/acorn help`";
         var lookupHelp = '\nTo look up an acronym type:' + '``` /acorn acronym ```\n';
         var defineHelp = '\n To define an acronym type:' +
-            '```/acorn define MYACRONYM, The Definition of My Acronym, http://www.optionalSiteToExplainMore.com ```' +
+            '```/acorn define MYACRONYM| The Definition of My Acronym| http://www.optionalSiteToExplainMore.com ```' +
             '\n Remember the `,` in between';
         var funFact = "\nFun Fact: You can add emojis to your definitions by typing them in slack format :simple_smile: \n";
 
@@ -74,12 +74,12 @@ var spreadsheetId = '1j07CCJR3Ff1KfFeNUmsAryM6Ra7z_Qp_SKMWaRpiYZc';
         } else if (command == 'DEFINE') {
           // Define an Acronym
           logger.info(query);
-            var definition = query.split(',');
+            var definition = query.split('|');
             logger.info(definition);
             if (definition.length < 2) {
                 pRes.send('Your definition is malformed. :grimacing: Please Try again' + confused);
             } else {
-                    var acronym = definition[0].split(' ')[1].toUpperCase(); // get rid of define
+                    var acronym = definition[0].split(' ')[1].toUpperCase().trim(); // get rid of define
                     var description = definition[1].trim();
                     var url = '';
                     if(definition.length === 3) {
@@ -127,7 +127,7 @@ var spreadsheetId = '1j07CCJR3Ff1KfFeNUmsAryM6Ra7z_Qp_SKMWaRpiYZc';
                           logger.info('The API returned an error: ' + err);
                           return;
                         }
-                        var acronymText = commandSplit[1].split(',')[0];
+                        var acronymText = commandSplit[1].split('|')[0];
                         var rows = response.values;
                         logger.info('number of rows', rows.length);
                         numRows = rows.length + 2;
