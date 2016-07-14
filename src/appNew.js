@@ -9,6 +9,14 @@ var logger = console;
 // https://docs.google.com/spreadsheets/d/1j07CCJR3Ff1KfFeNUmsAryM6Ra7z_Qp_SKMWaRpiYZc/edit
 var spreadsheetId = '1j07CCJR3Ff1KfFeNUmsAryM6Ra7z_Qp_SKMWaRpiYZc';
 
+    var verifySlack = function(token) {
+      if(token == process.env.SLACK_TOKEN) {
+        return true;
+      } else {
+        return false;
+      }
+    }
+
     app.use(bodyParser.urlencoded({ extended: false }));
     app.use(bodyParser.json());
     // APP Setup
@@ -55,18 +63,16 @@ var spreadsheetId = '1j07CCJR3Ff1KfFeNUmsAryM6Ra7z_Qp_SKMWaRpiYZc';
             '\n Remember the `,` in between';
         var funFact = "\nFun Fact: You can add emojis to your definitions by typing them in slack format :simple_smile: \n";
 
-        // If first word is 'define', split by , and try to insert into DB
-        // If first word is 'help' give list of help items
         var query = pReq.body.text;
         var commandSplit = query.split(' ');
-        var userName= pReq.body.user_name;
         var command = commandSplit[0].toUpperCase();
+        var userName= pReq.body.user_name;
         logger.info("INITIAL QUERY", query);
         logger.info("COMMAND IS", command);
-
-
-        // DEFINE AN ACRONYM
-        if (command == 'DEFINE') {
+        if(!verifySlack(pReq.body.token)) {
+            pRes.send('You Are Not a Valid User');
+        } else if (command == 'DEFINE') {
+          // Define an Acronym
           logger.info(query);
             var definition = query.split(',');
             logger.info(definition);
@@ -74,10 +80,10 @@ var spreadsheetId = '1j07CCJR3Ff1KfFeNUmsAryM6Ra7z_Qp_SKMWaRpiYZc';
                 pRes.send('Your definition is malformed. :grimacing: Please Try again' + confused);
             } else {
                     var acronym = definition[0].split(' ')[1].toUpperCase(); // get rid of define
-                    var description = definition[1];
+                    var description = definition[1].trim();
                     var url = '';
                     if(definition.length === 3) {
-                        var url = definition[2];
+                        var url = definition[2].trim();
                     }
                     var numRows = 0;
                     logger.info('Acronym to define: ', acronym);
