@@ -156,6 +156,8 @@ var spreadsheetId = '1j07CCJR3Ff1KfFeNUmsAryM6Ra7z_Qp_SKMWaRpiYZc';
             '\n Please Note: & are not currently supported in acronyms or definitions' + funFact + line;
             pRes.send(helpText);
 
+        } else if(command == 'SHOW-LIST') {
+          pRes.send('Here is the full list of acronyms: \n https://docs.google.com/spreadsheets/d/1j07CCJR3Ff1KfFeNUmsAryM6Ra7z_Qp_SKMWaRpiYZc/edit?usp=sharing' + line);
         } else {
             logger.info('acronym lookup');
           var getAcronym = function(auth) {
