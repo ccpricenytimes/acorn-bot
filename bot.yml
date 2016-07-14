@@ -5,9 +5,9 @@ description: A simple acronym bot
 config:
  - name: API_TOKEN
    friendly_name: API TOKEN
+   type: secret
    info: JSON FOR API TOKEN
-   default: the default value
-   global: false
+   global: true
 #screenshots:
 #  - screenshot: resources/screenshot1.png
 #  - screenshot: resources/screenshot2.jpg
