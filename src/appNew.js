@@ -10,7 +10,7 @@ var logger = console;
 var spreadsheetId = '1j07CCJR3Ff1KfFeNUmsAryM6Ra7z_Qp_SKMWaRpiYZc';
 
     var verifySlack = function(token) {
-      if(token == process.env.SLACK_TOKEN) {
+      if(token == process.env.SLACK_VERIFY_TOKEN) {
         return true;
       } else {
         return false;
