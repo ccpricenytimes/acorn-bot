@@ -3,30 +3,31 @@ var app = express();
 var google = require('googleapis');
 var bodyParser = require('body-parser');
 var api = require('./sheetsApi');
-var globalLogs = '';
+var logger = console;
+
+// Sheets Data
+// https://docs.google.com/spreadsheets/d/1j07CCJR3Ff1KfFeNUmsAryM6Ra7z_Qp_SKMWaRpiYZc/edit
+var spreadsheetId = '1j07CCJR3Ff1KfFeNUmsAryM6Ra7z_Qp_SKMWaRpiYZc';
 
     app.use(bodyParser.urlencoded({ extended: false }));
     app.use(bodyParser.json());
     // APP Setup
     app.get('/', function (req, res) {
-      console.log('running basic get');
-      var errorCallback = function(str) {
-        res.send('BROKEN: ' + str);
-      };
+      logger.info('running basic get');
       var getList = function(auth) {
       var sheets = google.sheets('v4');
       sheets.spreadsheets.values.get({
         auth: auth,
-        spreadsheetId: '1j07CCJR3Ff1KfFeNUmsAryM6Ra7z_Qp_SKMWaRpiYZc',
+        spreadsheetId: spreadsheetId,
         range: 'Acronym Data!A2:D',
       }, function(err, response) {
         if (err) {
-          console.log('The API returned an error: ' + err);
+          logger.info('The API returned an error: ' + err);
           return;
         }
         var rows = response.values;
         if (rows.length == 0) {
-          console.log('No data found.');
+          logger.info('No data found.');
         } else {
           var strToSend = '';
           for (var i = 0; i < rows.length; i++) {
@@ -39,7 +40,7 @@ var globalLogs = '';
       });
     };
 
-    api(getList, errorCallback);
+    api(getList);
     });
 
     app.post('/', function(pReq, pRes) {
@@ -59,28 +60,28 @@ var globalLogs = '';
         var commandSplit = query.split(' ');
         var userName= pReq.body.user_name;
         var command = commandSplit[0].toUpperCase();
-        console.log("INITIAL QUERY", query);
-        console.log("COMMAND IS", command);
+        logger.info("INITIAL QUERY", query);
+        logger.info("COMMAND IS", command);
 
 
         // DEFINE AN ACRONYM
         if (command == 'DEFINE') {
-          console.log(query);
+          logger.info(query);
             var definition = query.split(',');
-            console.log(definition);
+            logger.info(definition);
             if (definition.length < 2) {
                 pRes.send('Your definition is malformed. :grimacing: Please Try again' + confused);
             } else {
-                    var acronym = definition[0].split(' ')[1]; // get rid of define
+                    var acronym = definition[0].split(' ')[1].toUpperCase(); // get rid of define
                     var description = definition[1];
                     var url = '';
                     if(definition.length === 3) {
                         var url = definition[2];
                     }
                     var numRows = 0;
-                    console.log('Acronym to define: ', acronym);
-                    var insertCallback = function(auth) {
-                      console.log('entering insert');
+                    logger.info('Acronym to define: ', acronym);
+                    var insertAcronym = function(auth) {
+                      logger.info('entering insert');
                       var google = require('googleapis');
                       var sheets = google.sheets('v4');
                       var range = 'Acronym Data!A' + numRows +':E' + numRows;
@@ -90,7 +91,7 @@ var globalLogs = '';
                       }
                       sheets.spreadsheets.values.update({
                         "auth": auth,
-                        "spreadsheetId": '1j07CCJR3Ff1KfFeNUmsAryM6Ra7z_Qp_SKMWaRpiYZc',
+                        "spreadsheetId": spreadsheetId,
                         "valueInputOption": "RAW",
                         "range": range,
                         "resource": {
@@ -100,33 +101,33 @@ var globalLogs = '';
                         }
                       }, function(err, response) {
                         if (err) {
-                          console.log('The API returned an error: ' + err);
+                          logger.info('The API returned an error: ' + err);
                           return;
                         }
-                        console.log('success!');
+                        logger.info('success!');
                         pRes.send( acronym + ' has been added to the dictionary. :information_desk_person:' + lookupHelp + line);
                       });
                     };
-                    var insertAcronym = function (auth) {
+                    var duplicateSearch = function (auth) {
                       var google = require('googleapis');
                       var sheets = google.sheets('v4');
                       sheets.spreadsheets.values.get({
                         auth: auth,
-                        spreadsheetId: '1j07CCJR3Ff1KfFeNUmsAryM6Ra7z_Qp_SKMWaRpiYZc',
+                        spreadsheetId: spreadsheetId,
                         range: 'Acronym Data!A2:D',
                       }, function(err, response) {
                         if (err) {
-                          console.log('The API returned an error: ' + err);
+                          logger.info('The API returned an error: ' + err);
                           return;
                         }
                         var acronymText = commandSplit[1].split(',')[0];
                         var rows = response.values;
-                        console.log('number of rows', rows.length);
+                        logger.info('number of rows', rows.length);
                         numRows = rows.length + 2;
                         var found = false;
                         for (var i = 0; i < rows.length; i++) {
                           var row = rows[i];
-                          console.log(row[1], acronymText);
+                          logger.info(row[1], acronymText);
                           if(row[1].toUpperCase() == acronymText.toUpperCase()) {
                             found = true;
                             break;
@@ -135,14 +136,14 @@ var globalLogs = '';
                         if (found) {
                           pRes.send('Acnonym Already Exists. :upside_down_face: \n You can search with ```/acorn ' + acronymText + ' ```' + confused + line);
                         } else {
-                          api(insertCallback);
+                          api(insertAcronym);
                         }
                       });
                     };
-                    api(insertAcronym);
+                    api(duplicateSearch);
             }
 
-        } else if(command == 'HELP') {
+        } else if(command == 'HELP' || command == 'ACORN') {
             var helpText = hello +
             'I am a simple acronym bot :robot_face:' +
             lookupHelp + defineHelp +
@@ -150,21 +151,21 @@ var globalLogs = '';
             pRes.send(helpText);
 
         } else {
-            console.log('acronym lookup');
+            logger.info('acronym lookup');
           var getAcronym = function(auth) {
           var sheets = google.sheets('v4');
           sheets.spreadsheets.values.get({
             auth: auth,
-            spreadsheetId: '1j07CCJR3Ff1KfFeNUmsAryM6Ra7z_Qp_SKMWaRpiYZc',
+            spreadsheetId: spreadsheetId,
             range: 'Acronym Data!A2:D',
           }, function(err, response) {
             if (err) {
-              console.log('The API returned an error: ' + err);
+              logger.info('The API returned an error: ' + err);
               return;
             }
             var rows = response.values;
             if (rows.length == 0) {
-              console.log('No data found.');
+              logger.info('No data found.');
             } else {
               var foundAc = '';
               var foundDes = '';
@@ -181,7 +182,7 @@ var globalLogs = '';
               if(foundAc == '') {
                 pRes.send( query.toUpperCase() + ' is not defined. :unicorn_face:' + defineHelp + line);
               } else {
-                  var msg = hello + "\n------\n" + foundAc.toUpperCase() + " is " + foundDes + " :books:";
+                  var msg = hello + "\n------\n" + " :books: " + foundAc.toUpperCase() + " is " + foundDes;
 
                   if(foundUrl !== '' && foundUrl !== undefined) {
                       msg = msg + "\n Check out this URL: " + foundUrl;
@@ -201,37 +202,33 @@ var globalLogs = '';
 
 
     app.listen(process.env.PORT, function () {
-      console.log('Acorn listening on ' + process.env.PORT);
+      logger.info('Acorn listening on ' + process.env.PORT);
 
-      /**
-       * Print the names and majors of students in a sample spreadsheet:
-       * https://docs.google.com/spreadsheets/d/1j07CCJR3Ff1KfFeNUmsAryM6Ra7z_Qp_SKMWaRpiYZc/edit
-       */
       var listAcronyms = function (auth) {
         var google = require('googleapis');
         var sheets = google.sheets('v4');
         sheets.spreadsheets.values.get({
           auth: auth,
-          spreadsheetId: '1j07CCJR3Ff1KfFeNUmsAryM6Ra7z_Qp_SKMWaRpiYZc',
+          spreadsheetId: spreadsheetId,
           range: 'Acronym Data!A2:D',
         }, function(err, response) {
           if (err) {
-            console.log('The API returned an error: ' + err);
+            logger.info('The API returned an error: ' + err);
             return;
           }
           var rows = response.values;
           if (rows.length == 0) {
-            console.log('No data found.');
+            logger.info('No data found.');
           } else {
-            console.log('Acronym, Definition, URL:');
+            logger.info('Acronym, Definition, URL:');
             for (var i = 0; i < rows.length; i++) {
               var row = rows[i];
               // Print all columns
-              console.log('%s, %s, %s', row[0], row[1], row[2]);
+              logger.info('%s, %s, %s', row[0], row[1], row[2]);
             }
           }
         });
       };
-      console.log('about to call API');
+      logger.info('about to call API');
       api(listAcronyms);
     }); // end of server setup
