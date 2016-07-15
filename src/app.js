@@ -57,14 +57,15 @@ var spreadsheetId = '1j07CCJR3Ff1KfFeNUmsAryM6Ra7z_Qp_SKMWaRpiYZc';
         var line = "\n-------------------------------------------------------------------------------------------------\n";
         var hello = "Hello " + pReq.body.user_name + " I\'m Acorn. :tree: \n";
         var confused = "\n Confused? Type `/acorn help`";
-        var lookupHelp = '\nTo look up an acronym type:' + '``` /acorn acronym ```\n';
-        var defineHelp = '\n To define an acronym type:' +
+        var lookupHelp = '\nTo *look up an acronym* type:' + '``` /acorn acronym ```\n';
+        var defineHelp = '\n To *define an acronym* type:' +
             '```/acorn define MYACRONYM | The Definition of My Acronym | http://www.OptionalSiteToExplainMore.com ```' +
-            '\n Remember the `|` (pipe) in between';
-        var defineAltHelp = '\n To define an alternate definition for an acronym type:' +
+            '\n Remember the `|` (pipe) in between\n';
+        var showListHelp = '\n To see the *full list of acronyms* type: `/acorn show-list`\n';
+        var defineAltHelp = '\n To *define an alternate definition* for an acronym type:' +
             '```/acorn define-alt MYACRONYM | The Definition of My Acronym | http://www.OptionalSiteToExplainMore.com ```' +
             '\n Remember the `|` (pipe) in between';
-        var funFact = "\nFun Fact: You can add emojis to your definitions by typing them in slack format :simple_smile: \n";
+        var funFact = "\n :horse2: *Fun Fact:* You can add emojis to your definitions by typing them in slack format :simple_smile: :ocean: \n";
 
         var query = pReq.body.text;
         var commandSplit = query.split(' ');
@@ -155,7 +156,7 @@ var spreadsheetId = '1j07CCJR3Ff1KfFeNUmsAryM6Ra7z_Qp_SKMWaRpiYZc';
         } else if(command == 'HELP' || command == 'ACORN') {
             var helpText = hello +
             'I am a simple acronym bot :robot_face:' +
-            lookupHelp + defineHelp + funFact  + defineAltHelp + line;
+            lookupHelp + showListHelp + defineHelp + funFact  + defineAltHelp + line;
             pRes.send(helpText);
 
         } else if(command == 'SHOW-LIST') {
