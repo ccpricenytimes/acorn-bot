@@ -59,7 +59,7 @@ var spreadsheetId = '1j07CCJR3Ff1KfFeNUmsAryM6Ra7z_Qp_SKMWaRpiYZc';
         var confused = "\n Confused? Type `/acorn help`";
         var lookupHelp = '\nTo look up an acronym type:' + '``` /acorn acronym ```\n';
         var defineHelp = '\n To define an acronym type:' +
-            '```/acorn define MYACRONYM | The Definition of My Acronym | http://www.optionalSiteToExplainMore.com ```' +
+            '```/acorn define MYACRONYM | The Definition of My Acronym | http://www.OptionalSiteToExplainMore.com ```' +
             '\n Remember the `|` (pipe) in between';
         var funFact = "\nFun Fact: You can add emojis to your definitions by typing them in slack format :simple_smile: \n";
 
@@ -152,12 +152,11 @@ var spreadsheetId = '1j07CCJR3Ff1KfFeNUmsAryM6Ra7z_Qp_SKMWaRpiYZc';
         } else if(command == 'HELP' || command == 'ACORN') {
             var helpText = hello +
             'I am a simple acronym bot :robot_face:' +
-            lookupHelp + defineHelp +
-            '\n Please Note: & are not currently supported in acronyms or definitions' + funFact + line;
+            lookupHelp + defineHelp + funFact + line;
             pRes.send(helpText);
 
         } else if(command == 'SHOW-LIST') {
-          pRes.send('Here is the full list of acronyms: \n https://docs.google.com/spreadsheets/d/1j07CCJR3Ff1KfFeNUmsAryM6Ra7z_Qp_SKMWaRpiYZc/edit?usp=sharing' + line);
+          pRes.send(':link: The full list of acronyms is <https://docs.google.com/spreadsheets/d/1j07CCJR3Ff1KfFeNUmsAryM6Ra7z_Qp_SKMWaRpiYZc/edit?usp=sharing|available here>.' + line);
         } else {
             logger.info('acronym lookup');
           var getAcronym = function(auth) {
