@@ -55,7 +55,7 @@ var spreadsheetId = '1j07CCJR3Ff1KfFeNUmsAryM6Ra7z_Qp_SKMWaRpiYZc';
 
         // Some Text Definitions
         var line = "\n-------------------------------------------------------------------------------------------------\n";
-        var hello = "Hello " + pReq.body.user_name + " I\'m Acorn. :tree: \n";
+        var hello = ":tree: Hello " + pReq.body.user_name + " I\'m Acorn. :acorn: \n";
         var confused = "\n Confused? Type `/acorn help`";
         var lookupHelp = '\nTo *look up an acronym* type:' + '``` /acorn acronym ```\n';
         var defineHelp = '\n To *define an acronym* type:' +
