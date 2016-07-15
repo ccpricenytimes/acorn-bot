@@ -61,6 +61,9 @@ var spreadsheetId = '1j07CCJR3Ff1KfFeNUmsAryM6Ra7z_Qp_SKMWaRpiYZc';
         var defineHelp = '\n To define an acronym type:' +
             '```/acorn define MYACRONYM | The Definition of My Acronym | http://www.OptionalSiteToExplainMore.com ```' +
             '\n Remember the `|` (pipe) in between';
+        var defineAltHelp = '\n To define an alternate definition for an acronym type:' +
+            '```/acorn define-alt MYACRONYM | The Definition of My Acronym | http://www.OptionalSiteToExplainMore.com ```' +
+            '\n Remember the `|` (pipe) in between';
         var funFact = "\nFun Fact: You can add emojis to your definitions by typing them in slack format :simple_smile: \n";
 
         var query = pReq.body.text;
@@ -71,7 +74,7 @@ var spreadsheetId = '1j07CCJR3Ff1KfFeNUmsAryM6Ra7z_Qp_SKMWaRpiYZc';
         logger.info("COMMAND IS", command);
         if(!verifySlack(pReq.body.token)) {
             pRes.send('You Are Not a Valid User');
-        } else if (command == 'DEFINE') {
+        } else if (command == 'DEFINE' || command == 'DEFINE-ALT') {
           // Define an Acronym
           logger.info(query);
             var definition = query.split('|');
@@ -139,8 +142,8 @@ var spreadsheetId = '1j07CCJR3Ff1KfFeNUmsAryM6Ra7z_Qp_SKMWaRpiYZc';
                             break;
                           }
                         }
-                        if (found) {
-                          pRes.send('Acnonym Already Exists. :upside_down_face: \n You can search with ```/acorn ' + acronymText + ' ```' + confused + line);
+                        if (found && command == 'DEFINE') {
+                          pRes.send('Acnonym Already Exists. :upside_down_face: \n You can search with ```/acorn ' + acronymText + ' ```' + defineAltHelp + confused + line);
                         } else {
                           api(insertAcronym);
                         }
@@ -152,7 +155,7 @@ var spreadsheetId = '1j07CCJR3Ff1KfFeNUmsAryM6Ra7z_Qp_SKMWaRpiYZc';
         } else if(command == 'HELP' || command == 'ACORN') {
             var helpText = hello +
             'I am a simple acronym bot :robot_face:' +
-            lookupHelp + defineHelp + funFact + line;
+            lookupHelp + defineHelp + funFact  + defineAltHelp + line;
             pRes.send(helpText);
 
         } else if(command == 'SHOW-LIST') {
@@ -174,25 +177,32 @@ var spreadsheetId = '1j07CCJR3Ff1KfFeNUmsAryM6Ra7z_Qp_SKMWaRpiYZc';
             if (rows.length == 0) {
               logger.info('No data found.');
             } else {
-              var foundAc = '';
-              var foundDes = '';
-              var foundUrl = '';
+              var foundAcs = [];
               for (var i = 0; i < rows.length; i++) {
                 var row = rows[i];
                 if(row[1].toUpperCase() == query.toUpperCase()) {
-                  foundAc = row[1];
-                  foundDes = row[2];
-                  foundUrl = row[3];
-                  break;
+                  var foundObj = {
+                    'ac': row[1],
+                    'des': row[2],
+                     'url': row[3]
+                  };
+                  foundAcs.push(foundObj);
                 }
               }
-              if(foundAc == '') {
+              if(foundAcs.length == 0) {
                 pRes.send( query.toUpperCase() + ' is not defined. :unicorn_face:' + defineHelp + line);
               } else {
-                  var msg = hello + "\n------\n" + " :books: " + foundAc.toUpperCase() + " is " + foundDes;
-
-                  if(foundUrl !== '' && foundUrl !== undefined) {
-                      msg = msg + "\n Check out this URL: " + foundUrl;
+                  var msg = hello + "\n------\n" + ":books: \n" + query.toUpperCase() + " is ";
+                  for(var j=0; j < foundAcs.length; j++) {
+                    var obj = foundAcs[j];
+                    msg = msg + obj.des;
+                    if(obj.url !== '' && obj.url !== undefined) {
+                        msg = msg + "\nCheck out this URL: " + obj.url;
+                    }
+                    // Add OR if there are multiple definitons and this isnt the last on the list
+                    if(foundAcs.length > 1 && j !== (foundAcs.length -1)) {
+                      msg = msg + "\n or \n"
+                    }
                   }
                   msg = msg + line;
                   pRes.send(msg);
