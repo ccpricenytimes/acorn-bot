@@ -1,12 +1,12 @@
 name: acorn-bot
 description: A simple acronym bot
 avatar: AcornTheSquirrelDecapitated-512.png
-background: AcornTheSquirrel-512.png
+#background: AcornTheSquirrel-512.png
 config:
  - name: API_TOKEN
    friendly_name: API TOKEN
    type: secret
    info: JSON FOR API TOKEN
    global: true
-screenshots:
-  - screenshot: AcornTheSquirrel-512.png
+#screenshots:
+#  - screenshot: AcornTheSquirrel-512.png
