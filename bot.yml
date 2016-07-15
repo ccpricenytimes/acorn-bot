@@ -1,6 +1,6 @@
 name: acorn-bot
 description: A simple acronym bot
-#avatar: resources/avatar.png
+avatar: acorn.png
 #background: resources/background.png
 config:
  - name: API_TOKEN
